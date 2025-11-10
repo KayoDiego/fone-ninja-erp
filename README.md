@@ -19,17 +19,17 @@ Sistema de gerenciamento de estoque desenvolvido em Laravel 10 + Vue 3 + Vite.
    - Banco de dados compatível (MySQL ou MariaDB)
 
 2. Instalar dependências
-   composer install
-   npm install
+   - composer install
+   - npm install
 
 3. Configurar variáveis de ambiente
-   cp .env.example .env
-   php artisan key:generate
-   Ajuste as credenciais do banco no arquivo .env
+  - cp .env.example .env
+  - php artisan key:generate
+  - Ajuste as credenciais do banco no arquivo .env
 
 4. Executar migrações
-   php artisan migrate
+  - php artisan migrate
 
 5. Iniciar os servidores
-   php artisan serve
-   npm run dev
+  - php artisan serve
+  - npm run dev
