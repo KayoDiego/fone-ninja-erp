@@ -6,6 +6,7 @@ use App\Models\Venda;
 use App\Models\Produto;
 use Illuminate\Support\Facades\DB;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class VendaService
 {
@@ -88,10 +89,15 @@ class VendaService
         }
     }
 
-    public function cancelar(Venda $venda)
+    public function cancelar($vendaId)
     {
         try {
             DB::beginTransaction();
+
+            $venda = Venda::with('itens.produto')->find($vendaId);
+            if (!$venda) {
+                throw new Exception('Venda não encontrada.', 404);
+            }
 
             if ($venda->cancelada) {
                 throw new Exception('Essa venda já tinha sido cancelada.', 409);
@@ -99,6 +105,9 @@ class VendaService
 
             foreach ($venda->itens as $item) {
                 $produto = $item->produto;
+                if (!$produto) {
+                    continue;
+                }
                 $produto->estoque += $item->quantidade;
                 $produto->save();
             }
@@ -107,11 +116,10 @@ class VendaService
             $venda->save();
 
             DB::commit();
-
             return $venda;
         } catch (Exception $e) {
+            Log::error('Erro ao cancelar venda: ' . $e->getMessage());
             DB::rollBack();
-
             throw $e;
         }
     }

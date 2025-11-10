@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\VendaRequest;
 use App\Services\VendaService;
-use App\Models\Venda;
 use Illuminate\Http\JsonResponse;
 use Exception;
 
@@ -39,17 +38,17 @@ class VendaController extends Controller
         }
     }
 
-    public function cancelar(Venda $venda): JsonResponse
+    public function cancelar($id): JsonResponse
     {
         try {
-            $cancelada = $this->vendas->cancelar($venda);
+            $cancelada = $this->vendas->cancelar((int) $id);
 
             return response()->json([
                 'venda' => $cancelada,
                 'message' => 'Estoque devolvido e venda cancelada.'
             ]);
         } catch (Exception $e) {
-            $codigo = $e->getCode() === 0 ? 500 : $e->getCode();
+            $codigo = is_numeric($e->getCode()) && $e->getCode() > 0 ? (int) $e->getCode() : 500;
 
             return response()->json(['message' => 'Erro ao cancelar venda'], $codigo);
         }
